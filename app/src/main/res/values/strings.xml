@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SmartphoneL/Rocker</string>
+    <string name="add_timer">タイマーを追加</string>
+    <string name="add_timer_finish">完了</string>
+</resources>
