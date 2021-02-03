@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [Timer::class], version = 1)
+@Database(entities = [MyTimer::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun timerDao(): TimerDao
 
@@ -30,9 +30,9 @@ abstract class AppDatabase : RoomDatabase() {
             timerDao.deleteAll()
 
             // Add sample words.
-            var timer = Timer(id = 0, name = "Wake up", hour = 7, min = 0, time = "07:00")
+            var timer = MyTimer(id = 0, name = "Wake up", hour = 7, min = 0, time = "07:00")
             timerDao.insertTimer(timer)
-            timer = Timer(id = 1, name = "Report", hour = 15, min = 30, time = "15:30")
+            timer = MyTimer(id = 1, name = "Report", hour = 15, min = 30, time = "15:30")
             timerDao.insertTimer(timer)
 
         }

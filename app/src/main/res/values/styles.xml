@@ -11,9 +11,8 @@
     <!-- The default font for RecyclerView items is too small.
     The margin is a simple delimiter between the words. -->
     <style name="timer_title">
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@android:color/holo_orange_light</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="android:textColor">@android:color/secondary_text_light</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">34sp</item>
     </style>
 </resources>

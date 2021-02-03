@@ -1,21 +1,27 @@
 package com.example.smartphonelrocker.timer
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface TimerDao {
     @Query("select * from timers ORDER BY id")
-    fun getAllTimer(): Flow<List<Timer>>
+    fun getAllTimer(): Flow<List<MyTimer>>
 
     @Query("select * from timers where id = :id")
-    fun getTimer(id: Int): Timer
+    fun getTimer(id: Int): MyTimer
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTimer(vararg timer: Timer)
+//    TODO: コンフリクトしたときのやつをかく（単数なのでいらんかも）
+    @Insert
+    suspend fun insertTimer(timer: MyTimer)
 
-    @Delete
-    suspend fun deleteTimer(vararg timer: Timer)
+    @Query("SELECT * FROM timers ORDER BY id DESC LIMIT 1")
+    fun getLastTimer(): Flow<MyTimer>?
+
+    @Query("DELETE FROM timers where id = :id")
+    suspend fun deleteTimer(id: Int)
 
     @Query("DELETE FROM timers")
     suspend fun deleteAll()

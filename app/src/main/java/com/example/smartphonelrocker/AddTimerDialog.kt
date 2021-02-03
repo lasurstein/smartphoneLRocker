@@ -21,15 +21,14 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AddTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, TextWatcher {
-
     private lateinit var listener : NoticeDialogListener
     private var selectedHour : Int = 0
     private var selectedMin : Int = 0
     private var alarmName : String = ""
 
     interface NoticeDialogListener {
-        fun onNumberPickerDialogPositiveClick(dialog: DialogFragment, selectedHour : Int, selectedMin: Int, alarmName: String)
-        fun onNumberPickerDialogNegativeClick(dialog: DialogFragment)
+        fun onPositiveClick(dialog: DialogFragment, selectedHour : Int, selectedMin: Int, alarmName: String)
+        fun onNegativeClick(dialog: DialogFragment)
     }
 
     override fun onAttach(context: Context) {
@@ -48,10 +47,12 @@ class AddTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Tex
         val builder = AlertDialog.Builder(context)
 
         val alarmNameEdit: EditText = dialogView.findViewById<EditText>(R.id.alarmName)
-
+        alarmNameEdit.addTextChangedListener(this)
 
         val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker)
+        hourPicker.setOnValueChangedListener(this)
         hourPicker.tag = "hourPicker"
+        hourPicker.textSize = 80.0F
         val displayHourArray = Array(24){"%02d".format(it)}
         hourPicker.minValue = 0  // NumberPickerの最小値設定
         hourPicker.maxValue = displayHourArray.size - 1 // NumberPickerの最大値設定
@@ -60,9 +61,12 @@ class AddTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Tex
         val formatter = DateTimeFormatter.ofPattern("HH")
         val currentHour = current.format(formatter).toInt()
         hourPicker.value = currentHour
+        this.selectedHour = currentHour
 
         val minPicker = dialogView.findViewById<NumberPicker>(R.id.minPicker)
+        minPicker.setOnValueChangedListener(this)
         minPicker.tag = "minPicker"
+        minPicker.textSize = 80.0F
         val displayMinArray = Array(12){"%02d".format((it * 5))}
         minPicker.minValue = 0  // NumberPickerの最小値設定
         minPicker.maxValue = displayMinArray.size - 1 // NumberPickerの最大値設定
@@ -72,14 +76,14 @@ class AddTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Tex
             .setTitle(R.string.title_add_timer)
             .setPositiveButton(R.string.finish_add_timer) { _, _ ->
                 if (this.alarmName != "") {
-                    this.listener.onNumberPickerDialogPositiveClick(this, this.selectedHour, this.selectedMin, this.alarmName)
+                    this.listener.onPositiveClick(this, this.selectedHour, this.selectedMin, this.alarmName)
                 } else {
                     // TODO: 直す
-                    this.listener.onNumberPickerDialogNegativeClick(this)
+                    this.listener.onNegativeClick(this)
                 }
             }
             .setNegativeButton(R.string.cancel_add_timer) { _, _ ->
-                this.listener.onNumberPickerDialogNegativeClick(this)
+                this.listener.onNegativeClick(this)
             }
 
         return builder.create()
@@ -91,15 +95,18 @@ class AddTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Tex
         } else {
             this.selectedMin = newVal * 5
         }
-        Log.d("item", newVal.toString())
-
+        Log.d("item", "%d:%d".format(this.selectedHour, this.selectedMin))
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
     }
 
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+    }
+
     override fun afterTextChanged(s: Editable?) {
-        this.alarmName = s
+        this.alarmName = s.toString()
+        Log.d("item", this.alarmName)
     }
 
     override fun onDestroy() {
@@ -113,5 +120,6 @@ class AddTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Tex
 //    fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
 //        // Do something with the time chosen by the user
 //    }
+
 
 }

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartphonelrocker.R
 
-class TimerListAdapter : ListAdapter<Timer, TimerListAdapter.TimerViewHolder>(TimersComparator()) {
+class TimerListAdapter : ListAdapter<MyTimer, TimerListAdapter.TimerViewHolder>(TimersComparator()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerViewHolder {
         return TimerViewHolder.create(parent)
@@ -39,12 +39,12 @@ class TimerListAdapter : ListAdapter<Timer, TimerListAdapter.TimerViewHolder>(Ti
         }
     }
 
-    class TimersComparator : DiffUtil.ItemCallback<Timer>() {
-        override fun areItemsTheSame(oldItem: Timer, newItem: Timer): Boolean {
+    class TimersComparator : DiffUtil.ItemCallback<MyTimer>() {
+        override fun areItemsTheSame(oldItem: MyTimer, newItem: MyTimer): Boolean {
             return oldItem === newItem
         }
 
-        override fun areContentsTheSame(oldItem: Timer, newItem: Timer): Boolean {
+        override fun areContentsTheSame(oldItem: MyTimer, newItem: MyTimer): Boolean {
             return oldItem.id == newItem.id
         }
     }
