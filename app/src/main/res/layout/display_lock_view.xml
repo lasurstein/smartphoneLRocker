@@ -1,0 +1,51 @@
+<com.example.smartphonelrocker.DisplayLockView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Theme.SmartphoneLRocker.MyView"
+    app:exampleDimension="24sp"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:layout_gravity="center"
+    android:layout_marginHorizontal="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/displayLockAlarmTime"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/big_padding"
+            android:layout_marginTop="@dimen/big_padding"
+            android:layout_weight="2"
+            android:text="07:00"
+            android:textSize="48sp" />
+
+        <TextView
+            android:id="@+id/displayLockAlarmName"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/big_padding"
+            android:layout_weight="1"
+            android:text="起床の時間です！"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            app:srcCompat="@android:mipmap/sym_def_app_icon"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
+
+        <Button
+            android:id="@+id/exitLockButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="exit" />
+
+    </LinearLayout>
+
+</com.example.smartphonelrocker.DisplayLockView>

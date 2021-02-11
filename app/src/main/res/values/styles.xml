@@ -15,4 +15,9 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">34sp</item>
     </style>
+
+    <style name="Widget.Theme.SmartphoneLRocker.MyView" parent="">
+        <item name="android:background">@color/gray_400</item>
+        <item name="exampleColor">@color/light_blue_400</item>
+    </style>
 </resources>

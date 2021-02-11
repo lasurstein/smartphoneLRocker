@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.widget.TextView
 
-class DisplayMessageActivity : AppCompatActivity() {
+class DisplayLockActivity : AppCompatActivity() {
     lateinit var mp0: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {

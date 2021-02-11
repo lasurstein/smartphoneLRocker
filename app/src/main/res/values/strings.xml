@@ -7,4 +7,7 @@
     <string name="add">+</string>
     <string name="add_timer_finish">アラームを追加しました</string>
     <string name="finish_add_timer">完了</string>
+    <string name="edit_timer_finish">タイマーを保存しました</string>
+    <string name="delete_timer_failure">削除に失敗しました</string>
+    <string name="delete_timer_finish">タイマーを削除しました</string>
 </resources>

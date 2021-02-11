@@ -11,6 +11,14 @@ class TimerViewModel(private val repository: TimerRepository) : ViewModel(){
     fun insertTimer(myTimer: MyTimer) = viewModelScope.launch {
         repository.insertTimer(myTimer)
     }
+
+    fun updateTimer(myTimer: MyTimer) = viewModelScope.launch {
+        repository.updateTimer(myTimer)
+    }
+
+    fun deleteTimer(id: Int) = viewModelScope.launch {
+        repository.deleteTimer(id)
+    }
 }
 class TimerViewModelFactory(private val repository: TimerRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

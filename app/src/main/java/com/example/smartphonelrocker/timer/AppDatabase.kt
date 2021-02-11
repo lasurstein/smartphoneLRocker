@@ -30,10 +30,10 @@ abstract class AppDatabase : RoomDatabase() {
             timerDao.deleteAll()
 
             // Add sample words.
-            var timer = MyTimer(id = 0, name = "Wake up", hour = 7, min = 0, time = "07:00")
-            timerDao.insertTimer(timer)
-            timer = MyTimer(id = 1, name = "Report", hour = 15, min = 30, time = "15:30")
-            timerDao.insertTimer(timer)
+//            var timer = MyTimer(id = 0, name = "Wake up", hour = 7, min = 0, time = "07:00")
+//            timerDao.insertTimer(timer)
+//            timer = MyTimer(id = 1, name = "Report", hour = 15, min = 30, time = "15:30")
+//            timerDao.insertTimer(timer)
 
         }
     }
