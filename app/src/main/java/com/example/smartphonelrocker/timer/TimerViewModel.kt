@@ -1,10 +1,9 @@
 package com.example.smartphonelrocker.timer
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class TimerViewModel(private val repository: TimerRepository) : ViewModel(){
+class TimerViewModel(private val repository: TimerRepository) : ViewModel() {
     val allTimers: LiveData<List<MyTimer>> = repository.allTimers.asLiveData()
     val lastTimer: LiveData<MyTimer>? = repository.lastTimer?.asLiveData()
 
@@ -20,6 +19,7 @@ class TimerViewModel(private val repository: TimerRepository) : ViewModel(){
         repository.deleteTimer(id)
     }
 }
+
 class TimerViewModelFactory(private val repository: TimerRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TimerViewModel::class.java)) {

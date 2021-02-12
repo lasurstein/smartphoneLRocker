@@ -1,13 +1,10 @@
 package com.example.smartphonelrocker
 
-import android.app.AlarmManager
-import android.app.AlarmManager.AlarmClockInfo
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -18,16 +15,10 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartphonelrocker.timer.*
-import com.example.smartphonelrocker.utilities.*
+import com.example.smartphonelrocker.utilities.deleteAlarm
+import com.example.smartphonelrocker.utilities.setAlarm
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import android.provider.Settings
-import java.util.*
 import java.util.Objects.isNull
-import kotlin.coroutines.CoroutineContext
 
 
 class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
@@ -58,7 +49,10 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
         }
 
         timerViewModel.lastTimer?.observe(owner = this) { timer ->
-            this.lastTimerId = if (isNull(timer)) {0} else {timer.id}
+            if (!isNull(timer)) {
+                this.lastTimerId = timer.id
+            }
+            Log.d("info", "this.lastTimerId:%d".format(this.lastTimerId))
         }
 
         findViewById<FloatingActionButton>(R.id.btnShowDialog).setOnClickListener {
@@ -93,7 +87,7 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
             // add new alarm
             val myTimer: MyTimer = MyTimer(0, selectedName, selectedHour, selectedMin, time)
             timerViewModel.insertTimer(myTimer)
-            val id = this.lastTimerId.toInt()
+            val id = this.lastTimerId.toInt() + 1
             setAlarm(this, id, selectedName, selectedHour, selectedMin, time)
             Log.d("MainActivity", "Add Alarm: id:%d, time:%s".format(id, time))
             Log.d("info", "this.lastTimerId.toInt():%d".format(this.lastTimerId.toInt()))
@@ -112,12 +106,13 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
     }
 
     override fun onDeleteClick(dialog: DialogFragment, alarmId: Int) {
-        timerViewModel.deleteTimer(alarmId)
+        Log.d("MainActivity", "Delete Alarm: id:%d, time:%s\tthis.lastTimerId: ".format(alarmId, this.lastTimerId.toInt()))
         try {
+            timerViewModel.deleteTimer(alarmId)
+            deleteAlarm(this, alarmId)
             val toast =
                 Toast.makeText(applicationContext, R.string.delete_timer_finish, Toast.LENGTH_LONG)
             toast.show()
-            Log.d("MainActivity", "Update Alarm: id:%d, time:%s".format(alarmId))
             Log.d("info", "this.lastTimerId.toInt():%d".format(this.lastTimerId.toInt()))
         } catch (e: Exception) {
             Log.d("warn", "Cannot delete Timer.")

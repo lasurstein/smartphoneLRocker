@@ -8,10 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import com.example.smartphonelrocker.AlarmReceiver
 import java.util.*
-import com.example.smartphonelrocker.timer.*
 
 fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time: String) {
-    val id: Int = id
     val bundle = Bundle().apply {
         this.putInt("id", id)
         this.putString("name", name)
@@ -29,6 +27,7 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
         timeInMillis = System.currentTimeMillis()
         set(Calendar.HOUR_OF_DAY, hour)
         set(Calendar.MINUTE, min)
+        set(Calendar.SECOND, 0)
     }
     val diffCalendar = Calendar.getInstance()
 
@@ -43,11 +42,13 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
         calendar.timeInMillis,
         intent
     )
-    Log.d("setAlarm", "alarm date: %s".format(calendar.time))
-    Log.d("setAlarm", "now date: %s".format(diffCalendar.time))
+//    Log.d("setAlarm", "alarm date: %s".format(calendar.time))
+//    Log.d("setAlarm", "now date: %s".format(diffCalendar.time))
 
-    Log.d("setAlarm", "set alarm: %s, %02d:%02d, id: %d"
-        .format(calendar.get(Calendar.DATE), hour, min, id))
+    Log.d(
+        "setAlarm", "set alarm: %s, %02d:%02d, id: %d"
+            .format(calendar.get(Calendar.DATE), hour, min, id)
+    )
 }
 
 fun deleteAlarm(context: Context, id: Int) {

@@ -1,7 +1,7 @@
 package com.example.smartphonelrocker.timer
 
-import androidx.room.PrimaryKey
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "timers")
 data class MyTimer(
@@ -10,5 +10,5 @@ data class MyTimer(
     var hour: Int,
     var min: Int,
     var time: String,
-    ) {
-    }
+) {
+}

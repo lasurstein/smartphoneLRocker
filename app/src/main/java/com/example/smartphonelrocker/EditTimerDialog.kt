@@ -2,34 +2,26 @@ package com.example.smartphonelrocker
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.TimePickerDialog
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.service.autofill.Validators.and
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.format.DateFormat
-import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
-import android.view.View
 import android.widget.EditText
 import android.widget.NumberPicker
 import androidx.fragment.app.DialogFragment
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import java.util.*
-
 class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, TextWatcher {
 
-    private lateinit var listener : NoticeDialogListener
+    private lateinit var listener: NoticeDialogListener
 
     private var isExist: Int = -1
 
-    private var selectedHour : Int = 0
-    private var selectedMin : Int = 0
-    private var selectedName : String = ""
+    private var selectedHour: Int = 0
+    private var selectedMin: Int = 0
+    private var selectedName: String = ""
 
     private var alarmId: Int = 0
     private var hour: Int = 0
@@ -42,8 +34,14 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
     }
 
     interface NoticeDialogListener {
-        fun onSaveClick(dialog: DialogFragment,  alarmId: Int?, selectedName: String, selectedHour : Int, selectedMin: Int)
-        fun onDeleteClick(dialog: DialogFragment,  alarmId: Int)
+        fun onSaveClick(
+            dialog: DialogFragment,
+            alarmId: Int?,
+            selectedName: String,
+            selectedHour: Int,
+            selectedMin: Int
+        )
+        fun onDeleteClick(dialog: DialogFragment, alarmId: Int)
         fun onCancelClick(dialog: DialogFragment)
     }
 
@@ -57,9 +55,9 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?) : Dialog {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.activity_add_timer_dialog, null)!!
+        val dialogView = inflater.inflate(R.layout.activity_edit_timer_dialog, null)!!
         val builder = AlertDialog.Builder(context)
 
         val bundle = arguments
@@ -84,7 +82,7 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
         hourPicker.setOnValueChangedListener(this)
         hourPicker.tag = "hourPicker"
         hourPicker.textSize = 80.0F
-        val displayHourArray = Array(24){"%02d".format(it)}
+        val displayHourArray = Array(24) { "%02d".format(it) }
         hourPicker.minValue = 0
         hourPicker.maxValue = displayHourArray.size - 1
         hourPicker.displayedValues = displayHourArray
@@ -93,16 +91,16 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
         minPicker.setOnValueChangedListener(this)
         minPicker.tag = "minPicker"
         minPicker.textSize = 80.0F
-        val displayMinArray = Array(12){"%02d".format((it * 5))}
+        val displayMinArray = Array(12) { "%02d".format((it * 5)) }
         minPicker.minValue = 0
         minPicker.maxValue = displayMinArray.size - 1
         minPicker.displayedValues = displayMinArray
 
-        if(this.isExist == EXIST_ALARM) {
+        if (this.isExist == EXIST_ALARM) {
             alarmNameForm.setText(this.name)
             hourPicker.value = this.hour
             this.selectedHour = this.hour
-            minPicker.value =  this.min / 5
+            minPicker.value = this.min / 5
             this.selectedMin = this.min
         } else {
             // TODO:calenderからの時刻取得に統一した方が良いかも
@@ -115,29 +113,43 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
 
         // View作成
         builder.setView(dialogView)
-            .setTitle(R.string.title_add_timer)
-            .setPositiveButton(R.string.finish_add_timer) { _, _ ->
+            .setPositiveButton(R.string.finish) { _, _ ->
                 if (this.isExist == 1) {
                     if ((this.name != this.selectedName) || (this.hour != this.selectedHour) || (this.min != this.selectedMin)) {
-                        this.listener.onSaveClick(this, this.alarmId, this.selectedName, this.selectedHour, this.selectedMin)
+                        this.listener.onSaveClick(
+                            this,
+                            this.alarmId,
+                            this.selectedName,
+                            this.selectedHour,
+                            this.selectedMin
+                        )
                     }
                 } else {
                     if (this.selectedName != "") {
-                        this.listener.onSaveClick(this, null, this.selectedName, this.selectedHour, this.selectedMin)
+                        this.listener.onSaveClick(
+                            this,
+                            null,
+                            this.selectedName,
+                            this.selectedHour,
+                            this.selectedMin
+                        )
                     } else {
                         // TODO: 直す
                         this.listener.onCancelClick(this)
                     }
                 }
             }
-            .setNeutralButton("キャンセル") { _, _ ->
+            .setNeutralButton(R.string.cancel) { _, _ ->
                 this.listener.onCancelClick(this)
             }
 
         if (this.isExist == EXIST_ALARM) {
-            builder.setNegativeButton("削除") { _, _ ->
+            builder.setNegativeButton(R.string.delete) { _, _ ->
                 this.listener.onDeleteClick(this, this.alarmId)
             }
+                .setTitle(R.string.edit_timer)
+        } else {
+            builder.setTitle(R.string.add_timer)
         }
 
         return builder.create()

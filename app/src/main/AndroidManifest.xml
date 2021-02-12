@@ -16,10 +16,13 @@
         <service
             android:name=".displaylock.DisplayLockService"
             android:exported="false"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+            android:theme="@android:style/Theme.NoTitleBar">
+        </service>
+
+        <service
+            android:name=".displaylock.PlayRockService"
+            android:exported="false"
+            android:theme="@android:style/Theme.NoTitleBar">
         </service>
 
         <activity android:name=".MainActivity">
