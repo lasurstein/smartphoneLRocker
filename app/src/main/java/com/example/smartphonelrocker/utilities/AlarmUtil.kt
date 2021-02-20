@@ -20,7 +20,7 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
         intent.putExtra("TIMER_DETAIL", bundle)
-        PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
     val calendar: Calendar = Calendar.getInstance().apply {
@@ -52,11 +52,18 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
 }
 
 fun deleteAlarm(context: Context, id: Int) {
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_NO_CREATE)
     }
 
-    alarmManager.cancel(intent)
-    Log.d("deleteAlarm", "delete alarm: id: %d".format(id))
+    if (intent != null && alarmManager != null) {
+        intent.cancel()
+        alarmManager.cancel(intent)
+        Log.d("deleteAlarm", "delete alarm: id: %d".format(id))
+    } else {
+        Log.d("deleteAlarm", "cannot delete alarm: id: %d".format(id))
+        Log.d("deleteAlarm", if (alarmManager == null) "alarmManager is null" else "alarmManager is NOT null")
+        Log.d("deleteAlarm", if (intent == null) "intent is null" else "intent is NOT null")
+    }
 }

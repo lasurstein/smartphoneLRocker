@@ -21,13 +21,13 @@ class DisplayLockService : Service() {
         displayLockView = DisplayLockView.create(this)
         Log.d("DisplayLockService", "START: Display locked.")
 
-        displayLockView.findViewById<Button>(R.id.exitLockButton).setOnClickListener {
-            Log.d("DisplayLockService", "STOP: press exit button.")
-            stopSelf()
-        }
+//        displayLockView.findViewById<Button>(R.id.exitLockButton).setOnClickListener {
+//            Log.d("DisplayLockService", "STOP: press exit button.")
+//            stopSelf()
+//        }
 
         val timerCallback: TimerTask.() -> Unit = {
-            Log.d("DisplayLockService", "STOP: 30 sec passed.")
+            Log.d("DisplayLockService", "STOP: 5 min passed.")
             this.cancel()
             displayLockView.hide()
             stopSelf()
