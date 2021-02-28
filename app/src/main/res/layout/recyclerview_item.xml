@@ -9,8 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/timer_card"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="8dp">
+        android:layout_height="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,7 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:paddingLeft="32dp"
+                android:paddingStart="32dp"
                 android:paddingTop="24dp" />
 
             <TextView
