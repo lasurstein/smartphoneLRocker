@@ -12,26 +12,33 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartphonelrocker.timer.*
-import com.example.smartphonelrocker.utilities.deleteAlarm
-import com.example.smartphonelrocker.utilities.setAlarm
+import com.example.smartphonelrocker.utilities.cancelAlarm
+import com.example.smartphonelrocker.utilities.setAlarmByTimer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.*
 import java.util.Objects.isNull
+import kotlin.coroutines.CoroutineContext
 
 
-class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener, CoroutineScope {
 
     companion object {
         /** ID for the runtime permission dialog */
         private const val OVERLAY_PERMISSION_REQUEST_CODE = 1
     }
 
+    private val job = Job()
     private val timerViewModel: TimerViewModel by viewModels {
         TimerViewModelFactory((application as TimersApplication).repository)
     }
     private var lastTimerId: Long = 0
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +50,8 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
         val adapter = TimerListAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        recyclerView.addItemDecoration(itemDecoration)
 
         timerViewModel.allTimers.observe(owner = this) { timers ->
             timers.let { adapter.submitList(it) }
@@ -54,6 +63,7 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
             }
             Log.d("info", "this.lastTimerId:%d".format(this.lastTimerId))
         }
+
 
         findViewById<FloatingActionButton>(R.id.btnShowDialog).setOnClickListener {
             val dialog = EditTimerDialog()
@@ -73,6 +83,11 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
                 dialog.show(supportFragmentManager, "EditTimerDialog")
             }
         })
+
+//        findViewById<FloatingActionButton>(R.id.btnAllDelete).setOnClickListener {
+//            timerViewModel.deleteAll()
+//        }
+
     }
 
     override fun onSaveClick(
@@ -83,47 +98,95 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
         selectedMin: Int,
     ) {
         val time = "%02d:%02d".format(selectedHour, selectedMin)
-        if (alarmId == null) {
-            // add new alarm
-            val myTimer: MyTimer = MyTimer(0, selectedName, selectedHour, selectedMin, time)
-            timerViewModel.insertTimer(myTimer)
-            val id = this.lastTimerId.toInt() + 1
-            setAlarm(this, id, selectedName, selectedHour, selectedMin, time)
-            Log.d("MainActivity", "Add Alarm: id:%d, time:%s".format(id, time))
-            Log.d("info", "this.lastTimerId.toInt():%d".format(this.lastTimerId.toInt()))
-        } else {
-            // update exist alarm
-            val myTimer: MyTimer =
-                MyTimer(alarmId.toLong(), selectedName, selectedHour, selectedMin, time)
-            timerViewModel.updateTimer(myTimer)
-            deleteAlarm(this, alarmId)
-            setAlarm(this, alarmId, selectedName, selectedHour, selectedMin, time)
-            Log.d("MainActivity", "Update Alarm: id:%d, time:%s".format(alarmId, time))
+        val myTimer: MyTimer =
+            MyTimer(alarmId?.toLong() ?: 0, selectedName, selectedHour, selectedMin, time)
+        launch {
+            saveAlarm(myTimer)
         }
-        val toast =
-            Toast.makeText(applicationContext, R.string.edit_timer_finish, Toast.LENGTH_LONG)
-        toast.show()
     }
 
     override fun onDeleteClick(dialog: DialogFragment, alarmId: Int) {
-        Log.d("MainActivity", "Delete Alarm: id:%d, time:%s\tthis.lastTimerId: ".format(alarmId, this.lastTimerId.toInt()))
-        try {
-            timerViewModel.deleteTimer(alarmId)
-            deleteAlarm(this, alarmId)
-            val toast =
-                Toast.makeText(applicationContext, R.string.delete_timer_finish, Toast.LENGTH_LONG)
-            toast.show()
-            Log.d("info", "this.lastTimerId.toInt():%d".format(this.lastTimerId.toInt()))
-        } catch (e: Exception) {
-            Log.d("warn", "Cannot delete Timer.")
-            val toast =
-                Toast.makeText(applicationContext, R.string.delete_timer_failure, Toast.LENGTH_LONG)
-            toast.show()
+        launch {
+            deleteAlarm(alarmId)
         }
     }
 
     override fun onCancelClick(dialog: DialogFragment) {
         return
+    }
+
+    private suspend fun saveAlarm(myTimer: MyTimer) {
+        val isEdit = myTimer.id.toInt() != 0
+        coroutineScope {
+            try {
+                val insertedId = withContext(context = Dispatchers.IO) {
+                    timerViewModel.insertTimer(myTimer)
+                }
+                myTimer.id = insertedId
+                setAlarmByTimer(applicationContext, myTimer)
+                Log.d(
+                    "MainActivity:saveAlarm",
+                    "%s alarm. id:%d, time:%s".format(
+                        if (isEdit) "Edit" else "Add",
+                        insertedId,
+                        myTimer.time
+                    )
+                )
+                Toast.makeText(
+                    applicationContext,
+                    if (isEdit) R.string.edit_timer_finish else R.string.add_timer_finish,
+                    Toast.LENGTH_LONG
+                ).show()
+            } catch (e: Exception) {
+                Log.d(
+                    "MainActivity:saveAlarm",
+                    "Cannot save alarm. id:%d, time:%s, %s".format(
+                        isEdit,
+                        myTimer.time,
+                        e.toString()
+                    )
+                )
+                Toast.makeText(applicationContext, R.string.edit_timer_failure, Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
+    }
+
+    private suspend fun deleteAlarm(id: Int) {
+        val toast =
+            Toast.makeText(applicationContext, R.string.delete_timer_finish, Toast.LENGTH_LONG)
+        val failureToast =
+            Toast.makeText(applicationContext, R.string.delete_timer_failure, Toast.LENGTH_LONG)
+        coroutineScope {
+            val result = runCatching {
+                cancelAlarm(applicationContext, id)
+            }.fold(
+                onSuccess = {
+                    it.also {
+                        val deletedId = withContext(context = Dispatchers.IO) {
+                            timerViewModel.deleteTimer(id)
+                        }
+                        if (deletedId > 0) {
+                            Log.d(
+                                "MainActivity:deleteAlarm",
+                                "Alarm deleted. id:%d, deletedId:%d".format(id, deletedId)
+                            )
+                            toast.show()
+                        } else {
+                            Log.d(
+                                "MainActivity:deleteAlarm",
+                                "Cannot delete alarm. id:%d, deletedId:%d".format(id, deletedId)
+                            )
+                            failureToast.show()
+                        }
+                    }
+                },
+                onFailure = {
+                    Log.d("MainActivity:deleteAlarm", "Cannot cancel alarm: %s".format(it))
+                    failureToast.show()
+                }
+            )
+        }
     }
 
     /** Requests an overlay permission to the user if needed. */
@@ -148,8 +211,12 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener {
 
     /** Checks if the overlay is permitted. */
     private fun isOverlayGranted() =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-                Settings.canDrawOverlays(this)
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
+
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
+    }
 
 
 }

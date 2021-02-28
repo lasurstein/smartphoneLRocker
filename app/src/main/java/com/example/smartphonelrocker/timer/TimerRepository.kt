@@ -9,19 +9,19 @@ class TimerRepository(private val timerDao: TimerDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertTimer(myTimer: MyTimer) {
+    suspend fun insertTimer(myTimer: MyTimer): Long {
         return timerDao.insertTimer(myTimer)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun updateTimer(myTimer: MyTimer) {
-        return timerDao.updateTimer(myTimer)
+    suspend fun deleteTimer(id: Int): Int {
+        return timerDao.deleteTimer(id)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun deleteTimer(id: Int) {
-        return timerDao.deleteTimer(id)
+    suspend fun deleteAll() {
+        return timerDao.deleteAll()
     }
 }

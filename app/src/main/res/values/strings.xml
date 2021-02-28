@@ -4,9 +4,10 @@
     <string name="add_timer">アラーム追加</string>
     <string name="edit_timer">アラーム追加</string>
     <string name="add_timer_finish">アラームを追加しました</string>
-    <string name="edit_timer_finish">タイマーを保存しました</string>
-    <string name="delete_timer_finish">タイマーを削除しました</string>
-    <string name="delete_timer_failure">削除に失敗しました</string>
+    <string name="edit_timer_finish">アラームを保存しました</string>
+    <string name="edit_timer_failure">アラーム編集に失敗しました</string>
+    <string name="delete_timer_finish">アラームを削除しました</string>
+    <string name="delete_timer_failure">アラーム削除に失敗しました</string>
     <string name="cancel">キャンセル</string>
     <string name="delete">削除</string>
     <string name="finish">完了</string>

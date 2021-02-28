@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.example.smartphonelrocker.AlarmReceiver
+import com.example.smartphonelrocker.timer.MyTimer
 import java.util.*
 
 fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time: String) {
@@ -18,6 +19,19 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
         this.putString("time", time)
     }
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    // 既存intentの確認
+    val existIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_NO_CREATE)
+    }
+    if (existIntent != null) {
+        alarmManager.cancel(existIntent)
+        existIntent.cancel()
+        Log.d("setAlarm", "EditAlarm: Cancel exist alarm.")
+    } else {
+        Log.d("setAlarm", "AddAlarm: Not Fount exist alarm.")
+    }
+
     val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
         intent.putExtra("TIMER_DETAIL", bundle)
         PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
@@ -42,7 +56,7 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
         calendar.timeInMillis,
         intent
     )
-//    Log.d("setAlarm", "alarm date: %s".format(calendar.time))
+    Log.d("setAlarm", "alarm date: %s".format(calendar.time))
 //    Log.d("setAlarm", "now date: %s".format(diffCalendar.time))
 
     Log.d(
@@ -51,19 +65,42 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
     )
 }
 
-fun deleteAlarm(context: Context, id: Int) {
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+fun setAlarmByTimer(context: Context, timer: MyTimer) {
+    setAlarm(context, timer.id.toInt(), timer.name, timer.hour, timer.min, timer.time)
+}
+
+fun cancelAlarm(context: Context, id: Int) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
         PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_NO_CREATE)
     }
 
-    if (intent != null && alarmManager != null) {
-        intent.cancel()
+    if (intent != null) {
         alarmManager.cancel(intent)
-        Log.d("deleteAlarm", "delete alarm: id: %d".format(id))
+        intent.cancel()
+        Log.d("deleteAlarm", "cancel alarm: id: %d".format(id))
     } else {
-        Log.d("deleteAlarm", "cannot delete alarm: id: %d".format(id))
-        Log.d("deleteAlarm", if (alarmManager == null) "alarmManager is null" else "alarmManager is NOT null")
-        Log.d("deleteAlarm", if (intent == null) "intent is null" else "intent is NOT null")
+        Log.d("deleteAlarm", "cannot cancel alarm (intent is null): id: %d".format(id))
     }
+}
+
+
+fun timerToBundle(timer: MyTimer): Bundle {
+    return Bundle().apply {
+        this.putInt("id", timer.id.toInt())
+        this.putString("name", timer.name)
+        this.putInt("hour", timer.hour)
+        this.putInt("min", timer.min)
+        this.putString("time", timer.time)
+    }
+}
+
+fun bundleToTimer(bundle: Bundle): MyTimer {
+    return MyTimer(
+        bundle.getInt("id").toLong(),
+        bundle.getString("name").toString(),
+        bundle.getInt("hour"),
+        bundle.getInt("min"),
+        bundle.getString("time").toString()
+    )
 }

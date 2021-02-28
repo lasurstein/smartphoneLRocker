@@ -1,6 +1,9 @@
 package com.example.smartphonelrocker.timer
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 
@@ -16,13 +19,10 @@ interface TimerDao {
     fun getLastTimer(): Flow<MyTimer>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTimer(timer: MyTimer)
-
-    @Update
-    suspend fun updateTimer(timer: MyTimer)
+    suspend fun insertTimer(timer: MyTimer): Long
 
     @Query("DELETE FROM timers where id = :id")
-    suspend fun deleteTimer(id: Int)
+    suspend fun deleteTimer(id: Int): Int
 
     @Query("DELETE FROM timers")
     suspend fun deleteAll()
