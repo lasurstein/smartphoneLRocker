@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">SmartphoneL/Rocker</string>
+    <string name="app_name">Smartphone L/Rocker</string>
     <string name="hint_add_timer_name">アラーム名を入力…</string>
     <string name="add_timer">アラーム追加</string>
-    <string name="edit_timer">アラーム追加</string>
+    <string name="edit_timer">アラーム編集</string>
     <string name="add_timer_finish">アラームを追加しました</string>
     <string name="edit_timer_finish">アラームを保存しました</string>
     <string name="edit_timer_failure">アラーム編集に失敗しました</string>
@@ -11,7 +11,19 @@
     <string name="cancel">キャンセル</string>
     <string name="delete">削除</string>
     <string name="finish">完了</string>
-    <string name="exit">exit</string>
-    <string name="lock_desc">🔒画面ロック中🔒</string>
-    <string name="rock_desc">🤸‍♂ストレッチ️しよう🤸‍♀️</string>
+    <string name="lock_desc">🔒作業に取り掛かろう🔒</string>
+    <string name="rock_desc">あと10回スクワットしよう️</string>
+    <string name="title_log">集中ログ</string>
+    <string name="title_activity_log">LogActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="add_log">記録を追加</string>
+    <string name="comment">comment</string>
+    <string name="log">log</string>
 </resources>

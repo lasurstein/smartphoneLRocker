@@ -1,10 +1,9 @@
-package com.example.smartphonelrocker.displaylock
+package com.example.smartphonelrocker.displayLock
 
 import android.app.Service
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import com.example.smartphonelrocker.DisplayLockView
 import com.example.smartphonelrocker.R

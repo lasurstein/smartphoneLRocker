@@ -1,7 +1,28 @@
 <resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- 初回起動時のテーマの内容 -->
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+
+    <!-- The default font for RecyclerView items is too small.
+    The margin is a simple delimiter between the words. -->
+    <style name="timer_title">
+        <item name="android:textColor">@android:color/secondary_text_light</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">34sp</item>
+    </style>
 
     <style name="Widget.Theme.SmartphoneLRocker.MyView" parent="">
-        <item name="android:background">@color/gray_600</item>
-        <item name="exampleColor">@color/light_blue_600</item>
+        <item name="android:background">@color/gray_400</item>
+        <item name="exampleColor">@color/light_blue_400</item>
     </style>
 </resources>

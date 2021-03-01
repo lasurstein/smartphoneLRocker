@@ -3,12 +3,14 @@ package com.example.smartphonelrocker
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
 import android.widget.NumberPicker
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -73,6 +75,9 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
             this.isExist = NON_EXIST_ALARM
         }
 
+        // タイトル
+        val title = dialogView.findViewById<TextView>(R.id.alarmTitle)
+
         // アラーム名
         val alarmNameForm: EditText = dialogView.findViewById<EditText>(R.id.alarmName)
         alarmNameForm.addTextChangedListener(this)
@@ -81,7 +86,9 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
         val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker)
         hourPicker.setOnValueChangedListener(this)
         hourPicker.tag = "hourPicker"
-        hourPicker.textSize = 80.0F
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            hourPicker.textSize = 80.0F
+        }
         val displayHourArray = Array(24) { "%02d".format(it) }
         hourPicker.minValue = 0
         hourPicker.maxValue = displayHourArray.size - 1
@@ -90,7 +97,9 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
         val minPicker = dialogView.findViewById<NumberPicker>(R.id.minPicker)
         minPicker.setOnValueChangedListener(this)
         minPicker.tag = "minPicker"
-        minPicker.textSize = 80.0F
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            minPicker.textSize = 80.0F
+        }
         val displayMinArray = Array(12) { "%02d".format((it * 5)) }
         minPicker.minValue = 0
         minPicker.maxValue = displayMinArray.size - 1
@@ -102,6 +111,7 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
             this.selectedHour = this.hour
             minPicker.value = this.min / 5
             this.selectedMin = this.min
+            title.text = getString(R.string.edit_timer)
         } else {
             // TODO:calenderからの時刻取得に統一した方が良いかも
             val current = LocalDateTime.now()
@@ -109,10 +119,12 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
             val currentHour = current.format(formatter).toInt()
             hourPicker.value = currentHour
             this.selectedHour = currentHour
+            title.text = getString(R.string.add_timer)
         }
 
         // View作成
-        builder.setView(dialogView)
+        builder
+            .setView(dialogView)
             .setPositiveButton(R.string.finish) { _, _ ->
                 if (this.isExist == 1) {
                     if ((this.name != this.selectedName) || (this.hour != this.selectedHour) || (this.min != this.selectedMin)) {
@@ -147,9 +159,6 @@ class EditTimerDialog : DialogFragment(), NumberPicker.OnValueChangeListener, Te
             builder.setNegativeButton(R.string.delete) { _, _ ->
                 this.listener.onDeleteClick(this, this.alarmId)
             }
-                .setTitle(R.string.edit_timer)
-        } else {
-            builder.setTitle(R.string.add_timer)
         }
 
         return builder.create()

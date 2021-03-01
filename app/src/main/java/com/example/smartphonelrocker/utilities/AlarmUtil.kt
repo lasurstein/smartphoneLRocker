@@ -43,6 +43,13 @@ fun setAlarm(context: Context, id: Int, name: String, hour: Int, min: Int, time:
         set(Calendar.MINUTE, min)
         set(Calendar.SECOND, 0)
     }
+
+//    //デバッグ用
+//    val calendar: Calendar = Calendar.getInstance().apply {
+//        timeInMillis = System.currentTimeMillis()
+//        add(Calendar.MINUTE, 1)
+//        set(Calendar.SECOND, 0)
+//    }
     val diffCalendar = Calendar.getInstance()
 
     // 設定する時刻が現在時刻より前の場合，1日後に設定

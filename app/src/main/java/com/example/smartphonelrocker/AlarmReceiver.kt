@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.example.smartphonelrocker.displaylock.PlayRockService
+import com.example.smartphonelrocker.displayLock.PlayRockService
 import com.example.smartphonelrocker.utilities.setAlarm
 
 class AlarmReceiver : BroadcastReceiver() {

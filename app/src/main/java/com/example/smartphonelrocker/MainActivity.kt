@@ -1,11 +1,14 @@
 package com.example.smartphonelrocker
 
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -42,13 +45,28 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         requestOverlayPermission()
+
+        setTheme(R.style.Theme_SmartphoneLRocker)
+        setContentView(R.layout.activity_main)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         val adapter = TimerListAdapter()
         recyclerView.adapter = adapter
+        adapter.setOnItemClickListener(object : TimerListAdapter.OnItemClickListener {
+            override fun onItemClickListener(view: View, position: Int, clickedTimer: MyTimer) {
+                val bundle = Bundle().apply {
+                    this.putInt("id", clickedTimer.id.toInt())
+                    this.putInt("hour", clickedTimer.hour)
+                    this.putInt("min", clickedTimer.min)
+                    this.putString("name", clickedTimer.name)
+                }
+                val dialog = EditTimerDialog()
+                dialog.arguments = bundle
+                dialog.show(supportFragmentManager, "EditTimerDialog")
+            }
+        })
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         recyclerView.addItemDecoration(itemDecoration)
@@ -64,30 +82,34 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener, 
             Log.d("info", "this.lastTimerId:%d".format(this.lastTimerId))
         }
 
-
         findViewById<FloatingActionButton>(R.id.btnShowDialog).setOnClickListener {
             val dialog = EditTimerDialog()
             dialog.show(supportFragmentManager, "EditTimerDialog")
         }
 
-        adapter.setOnItemClickListener(object : TimerListAdapter.OnItemClickListener {
-            override fun onItemClickListener(view: View, position: Int, clickedTimer: MyTimer) {
-                val bundle = Bundle().apply {
-                    this.putInt("id", clickedTimer.id.toInt())
-                    this.putInt("hour", clickedTimer.hour)
-                    this.putInt("min", clickedTimer.min)
-                    this.putString("name", clickedTimer.name)
-                }
-                val dialog = EditTimerDialog()
-                dialog.arguments = bundle
-                dialog.show(supportFragmentManager, "EditTimerDialog")
-            }
-        })
-
 //        findViewById<FloatingActionButton>(R.id.btnAllDelete).setOnClickListener {
 //            timerViewModel.deleteAll()
 //        }
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.my_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_alarm -> {
+                super.onOptionsItemSelected(item)
+            }
+            R.id.action_log -> {
+                val logIntent = Intent(this, LogActivity::class.java)
+                startActivity(logIntent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onSaveClick(
@@ -217,6 +239,4 @@ class MainActivity : AppCompatActivity(), EditTimerDialog.NoticeDialogListener, 
         job.cancel()
         super.onDestroy()
     }
-
-
 }
